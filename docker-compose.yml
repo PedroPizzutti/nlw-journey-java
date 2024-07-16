@@ -13,12 +13,6 @@ services:
       - "$MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT"
     volumes:
       - mysqlvolume:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - 8000:80
   
   app:
     depends_on:
@@ -26,17 +20,16 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    working_dir: /app
-    volumes:
-      - ./target/spring-0.0.1-SNAPSHOT.jar:/app/spring-0.0.1-SNAPSHOT.jar
     ports:
-      - "8080:8080"
+      - "$SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:$MYSQLDB_DOCKER_PORT/$MYSQLDB_DATABASE?useSSL=false&createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:$MYSQLDB_DOCKER_PORT/$MYSQLDB_DATABASE?allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8&useLegacyDatetimeCode=true&createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=$MYSQLDB_USER
       - SPRING_DATASOURCE_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-    command: ["java", "-jar", "spring-0.0.1-SNAPSHOT.jar"]
+    command: ["java", "-jar", "/app/spring-0.0.1-SNAPSHOT.jar"]
 
   
 volumes:
   mysqlvolume:
+
+  

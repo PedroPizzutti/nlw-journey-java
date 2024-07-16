@@ -1,6 +1,7 @@
 FROM openjdk:21
-RUN mvnw clean package -DskipTests
-WORKDIR /app
-COPY ./target/spring-0.0.1-SNAPSHOT.jar /app
-EXPOSE 8080
-CMD ["java", "-jar", "spring-0.0.1-SNAPSHOT.jar"]
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} application.jar
+CMD apt-get update -y
+ENTRYPOINT ["java", "-Xmx2048M", "-jar", "/application.jar"]
+
+#mvn clean package -DskipTests
